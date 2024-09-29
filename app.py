@@ -277,6 +277,13 @@ def get_user_entries():
     return json.dumps(entry_data, default=str), 200
 
 
+@app.route("/api/entries/<id>", methods=["GET"])
+@jwt_required()
+def get_user_entry(id):
+    entry = Entry.query.filter_by(owner_id=current_user.id, id=id).one_or_none()
+    return json.dumps(entry.to_dict(), default=str), 200
+
+
 @app.route("/api/entries/<id>", methods=["DELETE"])
 @jwt_required(fresh=True)
 def delete_user_entries(id):
