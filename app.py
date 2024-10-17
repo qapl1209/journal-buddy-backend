@@ -86,9 +86,6 @@ class Entry(db.Model):
     datetime = db.Column(db.DateTime(timezone=True), default=datetime.now().date())
     mood = db.Column(db.Integer, nullable=True, default=-1)
     lock = db.Column(db.Boolean, nullable=False, default=False)
-    __table_args__ = (
-        UniqueConstraint("owner_id", "datetime", name="_owner_datetime_uc"),
-    )
 
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -215,6 +212,7 @@ def create_entry():
     body = data["body"]
     favorite = data.get("favorite")
     owner = current_user.id
+    
 
     entry = Entry(
         title=title, body=body, favorited=favorite is not None, owner_id=owner
@@ -251,7 +249,6 @@ def edit_entry(id):
                 entry.title = title
                 entry.body = body
                 entry.favorite = favorite
-                entry.lock = lock
 
                 if lock:
                     entry.mood = 8
